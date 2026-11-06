@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Finans Mobil - Akıllı Bankacılık</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+  body {
+    background-color: #050811;
+    color: #f1f5f9;
+    user-select: text;
+    -webkit-user-select: text;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Glassmorphic Effects */
+  .glass-panel {
+    background: rgba(22, 30, 49, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-card {
+    background: linear-gradient(135deg, rgba(30, 41, 67, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  
+  /* Bank Specific Card Gradients & Themes */
+  .card-theme-enpara {
+    background: linear-gradient(135deg, #4c1d95 0%, #2e1065 60%, #1e1b4b 100%);
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.3);
+  }
+  .card-theme-akbank {
+    background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 60%, #450a0a 100%);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.3);
+  }
+  .card-theme-garanti {
+    background: linear-gradient(135deg, #065f46 0%, #044e37 60%, #022c22 100%);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.3);
+  }
+  .card-theme-yapakredi {
+    background: linear-gradient(135deg, #1e3a8a 0%, #172554 60%, #0f172a 100%);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+  }
+  .card-theme-default {
+    background: linear-gradient(135deg, #334155 0%, #1e293b 60%, #0f172a 100%);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 10px 25px -5px rgba(71, 85, 105, 0.3);
+  }
+
+  /* Custom Scrollbar for smooth touch scroll */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Bottom sheet animation */
+  .bottom-sheet {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bottom-sheet.closed {
+    transform: translateY(100%);
+  }
+
+  /* Pulse Glows */
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
+  }
+</style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-0 sm:p-4 bg-[#050811] text-slate-100">
+
+<!-- Background Ambient Glowing Lights (Desktop Backdrop) -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none hidden sm:block">
+  <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+  <div class="absolute top-1/2 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl"></div>
+</div>
+
+<!-- Main Mobile Frame Container -->
+<div class="w-full max-w-[430px] h-screen sm:h-[880px] bg-[#0b1120] sm:rounded-[44px] shadow-2xl overflow-hidden flex flex-col relative border-0 sm:border-8 sm:border-slate-800/80">
+
+  <!-- Android Status Bar -->
+  <div class="w-full px-6 pt-3 pb-2 flex justify-between items-center text-xs font-semibold text-slate-400 select-none z-30 bg-[#0b1120]/90 backdrop-blur-md">
+    <span id="android-clock">09:41</span>
+    <div class="flex items-center space-x-2">
+      <!-- 5G Icon -->
+      <span class="text-[10px] tracking-wider font-bold text-slate-400">5G</span>
+      <!-- Wi-Fi Icon -->
+      <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3C7.05 3 2.62 5.09 0 8.42L12 23L24 8.42C21.38 5.09 16.95 3 12 3Z"/></svg>
+      <!-- Battery Icon -->
+      <div class="flex items-center space-x-0.5 border border-slate-400/60 rounded px-1 py-0.5">
+        <div class="w-3 h-1.5 bg-emerald-400 rounded-sm"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Android Top App Header -->
+  <header class="px-5 py-3 flex items-center justify-between z-20">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-sm shadow-md border border-white/20">
+        TR
+      </div>
+      <div>
+        <div class="flex items-center space-x-1.5">
+          <h1 class="text-base font-bold text-white tracking-tight">Finans Mobil</h1>
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            Güvenli
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400 font-medium">Banka & Kart Takip Paneli</p>
+      </div>
+    </div>
+    
+    <!-- Action Icons (Notifications & Backup indicator) -->
+    <div class="flex items-center space-x-2">
+      <button onclick="switchTab('tab-settings')" class="w-9 h-9 rounded-full bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Scrollable App Screen Content -->
+  <main class="flex-1 overflow-y-auto no-scrollbar px-4 pb-24 pt-2 space-y-5">
+
+    <!-- TAB 1: SUMMARY / DASHBOARD -->
+    <div id="tab-home" class="tab-content space-y-5">
+      
+      <!-- Top Overview Metrics Grid -->
+      <section class="grid grid-cols-2 gap-3" id="metrics"></section>
+
+      <!-- Quick Action Pills -->
+      <section class="flex items-center justify-between bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80">
+        <button onclick="switchTab('tab-cards')" class="flex flex-col items-center justify-center space-y-1 flex-1 py-1.5 text-center group">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <span class="text-[11px] font-semibold text-slate-300">Kartlar</span>
+        </button>
+
+        <button onclick="switchTab('tab-accounts')" class="flex flex-col items-center justify-center space-y-1 flex-1 py-1.5 text-center group">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <span class="text-[11px] font-semibold text-slate-300">Ek Hesap</span>
+        </button>
+
+        <button onclick="newAccount()" class="flex flex-col items-center justify-center space-y-1 flex-1 py-1.5 text-center group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          </div>
+          <span class="text-[11px] font-semibold text-slate-300">Hesap Ekle</span>
+        </button>
+
+        <button onclick="backup()" class="flex flex-col items-center justify-center space-y-1 flex-1 py-1.5 text-center group">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          </div>
+          <span class="text-[11px] font-semibold text-slate-300">Yedekle</span>
+        </button>
+      </section>
+
+      <!-- Featured Cards Quick Slider Preview -->
+      <section class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-slate-200 tracking-wide uppercase text-[11px]">Kredi Kartlarım</h2>
+          <button onclick="switchTab('tab-cards')" class="text-xs text-blue-400 font-semibold hover:underline flex items-center">
+            Tümünü Gör <svg class="w-3.5 h-3.5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <div id="cards-preview-container" class="space-y-4"></div>
+      </section>
+
+      <!-- Recent Transactions Section -->
+      <section class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-slate-200 tracking-wide uppercase text-[11px]">Son İşlemler</h2>
+          <span class="text-[11px] text-slate-500" id="history-count">0 İşlem</span>
+        </div>
+        <div class="glass-panel rounded-2xl p-4">
+          <div id="history" class="space-y-3 max-h-72 overflow-y-auto no-scrollbar"></div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- TAB 2: CARDS DETAILED LIST -->
+    <div id="tab-cards" class="tab-content space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-white">Kredi Kartları Yönetimi</h2>
+        <span class="text-xs bg-blue-500/20 text-blue-400 px-2.5 py-1 rounded-full font-semibold border border-blue-500/30">4 Aktif Kart</span>
+      </div>
+      <div id="cards-full-container" class="space-y-4"></div>
+    </div>
+
+    <!-- TAB 3: OVERDRAFT ACCOUNTS (EK HESAPLAR) -->
+    <div id="tab-accounts" class="tab-content space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white">Ek Hesap / Artı Para</h2>
+          <p class="text-xs text-slate-400">Tüm banka kredili mevduat hesaplarınız</p>
+        </div>
+        <button onclick="newAccount()" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-3.5 py-2 rounded-xl flex items-center space-x-1 shadow-lg shadow-blue-600/30 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span>Ekle</span>
+        </button>
+      </div>
+
+      <div class="glass-panel rounded-2xl p-4">
+        <div id="accounts" class="space-y-3"></div>
+      </div>
+
+      <div class="p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-xs flex items-start space-x-2.5">
+        <svg class="w-5 h-5 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p class="leading-relaxed">Ek hesap faizleri bankaya göre değişiklik gösterebilir. Bankanızın bildirdiği güncel kullanılan tutarları buradan güncelleyebilirsiniz.</p>
+      </div>
+    </div>
+
+    <!-- TAB 4: SETTINGS & DATA MANAGEMENT -->
+    <div id="tab-settings" class="tab-content space-y-4 hidden">
+      <h2 class="text-base font-bold text-white">Ayarlar & Veri Yönetimi</h2>
+
+      <div class="glass-panel rounded-2xl p-4 space-y-4">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Veri Depolama & Yedek</h3>
+
+        <div class="grid grid-cols-1 gap-2.5">
+          <button onclick="backup()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold text-xs py-3 px-4 rounded-xl border border-slate-700/80 flex items-center justify-between transition">
+            <div class="flex items-center space-x-3">
+              <span class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">⬇</span>
+              <div class="text-left">
+                <div class="text-sm font-semibold">Yedek İndir (JSON)</div>
+                <div class="text-[10px] text-slate-400">Verilerinizi cihazınıza dosya olarak kaydeder</div>
+              </div>
+            </div>
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+
+          <button onclick="document.getElementById('file').click()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold text-xs py-3 px-4 rounded-xl border border-slate-700/80 flex items-center justify-between transition">
+            <div class="flex items-center space-x-3">
+              <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">⬆</span>
+              <div class="text-left">
+                <div class="text-sm font-semibold">Yedek Yükle</div>
+                <div class="text-[10px] text-slate-400">Önceden aldığınız yedeği geri yükleyin</div>
+              </div>
+            </div>
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+          <input id="file" type="file" accept=".json" class="hidden" onchange="restore(event)">
+
+          <button onclick="resetAll()" class="w-full bg-red-950/40 hover:bg-red-900/50 text-red-300 font-semibold text-xs py-3 px-4 rounded-xl border border-red-800/40 flex items-center justify-between transition mt-2">
+            <div class="flex items-center space-x-3">
+              <span class="w-8 h-8 rounded-lg bg-red-500/20 text-red-400 flex items-center justify-center">🗑</span>
+              <div class="text-left">
+                <div class="text-sm font-semibold">Tüm Verileri Sıfırla</div>
+                <div class="text-[10px] text-red-400/80">Kayıtlı tüm kart ve işlemleri siler</div>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="glass-panel rounded-2xl p-4 space-y-2">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Güvenlik Bilgilendirmesi</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Bu uygulama verilerinizi şifrelemeden sadece tarayıcınızın yerel hafızasında (<code class="text-blue-400">localStorage</code>) saklar. Borç kayıtları uygulama tarafından sunucuya gönderilmez; banka simgeleri ve tasarım dosyaları için dış hizmetlere istek yapılır. Lütfen gerçek kart şifresi veya CVV kodu girmeyiniz.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Android Bottom Navigation Bar -->
+  <nav class="absolute bottom-0 left-0 right-0 h-16 bg-[#0f172a]/95 backdrop-blur-xl border-t border-slate-800/80 px-4 flex items-center justify-around z-30">
+    
+    <button onclick="switchTab('tab-home')" id="nav-tab-home" class="nav-btn active flex flex-col items-center justify-center space-y-1 text-blue-500 transition">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span class="text-[10px] font-bold">Özet</span>
+    </button>
+
+    <button onclick="switchTab('tab-cards')" id="nav-tab-cards" class="nav-btn flex flex-col items-center justify-center space-y-1 text-slate-400 hover:text-slate-200 transition">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      <span class="text-[10px] font-medium">Kartlarım</span>
+    </button>
+
+    <button onclick="switchTab('tab-accounts')" id="nav-tab-accounts" class="nav-btn flex flex-col items-center justify-center space-y-1 text-slate-400 hover:text-slate-200 transition">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      <span class="text-[10px] font-medium">Ek Hesap</span>
+    </button>
+
+    <button onclick="switchTab('tab-settings')" id="nav-tab-settings" class="nav-btn flex flex-col items-center justify-center space-y-1 text-slate-400 hover:text-slate-200 transition">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+      <span class="text-[10px] font-medium">Ayarlar</span>
+    </button>
+
+  </nav>
+
+</div>
+
+<!-- Native Android Bottom Sheet Modal Container -->
+<div id="modal-backdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-end justify-center transition-opacity">
+  <div id="modal-sheet" class="bottom-sheet closed w-full max-w-[430px] max-h-[90dvh] overflow-y-auto bg-[#0f172a] border-t border-slate-700/80 rounded-t-[32px] p-6 text-white space-y-4 shadow-2xl">
+    
+    <!-- Modal Handle Bar -->
+    <div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-2"></div>
+
+    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+      <h3 id="modalTitle" class="text-base font-bold text-white">İşlem</h3>
+      <button onclick="closeModal()" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center hover:text-white">✕</button>
+    </div>
+
+    <form id="form" class="space-y-4">
+      <div id="fields" class="space-y-3"></div>
+      <div class="flex items-center space-x-3 pt-3">
+        <button type="button" onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs py-3 rounded-xl transition">İptal</button>
+        <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-3 rounded-xl shadow-lg shadow-blue-600/30 transition">Kaydet</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- Native Toast Notification -->
+<div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-700 text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-2xl z-50 flex items-center space-x-2 transition-all opacity-0 pointer-events-none transform -translate-y-4">
+  <span id="toast-icon">ℹ️</span>
+  <span id="toast-msg">Mesaj</span>
+</div>
+
+
+<script>
+const KEY = "finans-panelim-v1";
+const LOGO_DOMAINS = {"Enpara":"enpara.com", "Akbank":"akbank.com", "Garanti BBVA":"garantibbva.com.tr", "Yapı Kredi":"yapikredi.com.tr"};
+function bankLogo(name) {
+  const bank = Object.keys(LOGO_DOMAINS).find(k => name.toLocaleLowerCase("tr-TR").includes(k.toLocaleLowerCase("tr-TR")));
+  const fallback = getBankLogoSVG(name);
+  if (!bank) return fallback;
+  const domain = LOGO_DOMAINS[bank];
+  return `<span class="inline-flex w-8 h-8 rounded-xl bg-white items-center justify-center overflow-hidden shrink-0"><img width="27" height="27" alt="${escapeHTML(bank)} simgesi" src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/><span style="display:none">${fallback}</span></span>`;
+}
+
+
+// Live Clock for Android Status Bar
+function updateClock() {
+  const now = new Date();
+  const hrs = String(now.getHours()).padStart(2, '0');
+  const mins = String(now.getMinutes()).padStart(2, '0');
+  const el = document.getElementById('android-clock');
+  if(el) el.textContent = `${hrs}:${mins}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// SVG Vector Logos for Turkish Banks
+function getBankLogoSVG(bankName) {
+  const name = (bankName || '').toLowerCase();
+  
+  if (name.includes('enpara')) {
+    return `
+      <svg class="w-7 h-7" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="10" fill="#6d28d9"/>
+        <path d="M12 14H28M12 20H24M12 26H28" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="28" cy="20" r="2.5" fill="#a78bfa"/>
+      </svg>`;
+  } else if (name.includes('akbank')) {
+    return `
+      <svg class="w-7 h-7" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="10" fill="#dc2626"/>
+        <path d="M20 9L11 29H16L18 24H22L24 29H29L20 9ZM19 15L21 20H19V15Z" fill="white"/>
+      </svg>`;
+  } else if (name.includes('garanti')) {
+    return `
+      <svg class="w-7 h-7" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="10" fill="#059669"/>
+        <circle cx="20" cy="20" r="9" fill="white"/>
+        <path d="M20 13C16.1 13 13 16.1 13 20C13 23.9 16.1 27 20 27C23.9 27 27 23.9 27 20" stroke="#059669" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>`;
+  } else if (name.includes('yapı') || name.includes('yapi')) {
+    return `
+      <svg class="w-7 h-7" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="10" fill="#1d4ed8"/>
+        <path d="M13 13H27V27H13V13Z" stroke="white" stroke-width="3"/>
+        <path d="M18 18H22V22H18V18Z" fill="#60a5fa"/>
+      </svg>`;
+  } else if (name.includes('iş') || name.includes('is')) {
+    return `
+      <svg class="w-7 h-7" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="10" fill="#0284c7"/>
+        <path d="M15 12H25M20 12V28M15 28H25" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>`;
+  } else {
+    return `
+      <svg class="w-7 h-7" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="10" fill="#475569"/>
+        <path d="M12 26V18L20 12L28 18V26H12Z" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
+      </svg>`;
+  }
+}
+
+// Get Dynamic Card Gradient Theme Class based on Bank Name
+function getCardThemeClass(bankName) {
+  const name = (bankName || '').toLowerCase();
+  if (name.includes('enpara')) return 'card-theme-enpara';
+  if (name.includes('akbank')) return 'card-theme-akbank';
+  if (name.includes('garanti')) return 'card-theme-garanti';
+  if (name.includes('yapı') || name.includes('yapi')) return 'card-theme-yapakredi';
+  return 'card-theme-default';
+}
+
+function initialData() {
+  return {
+    cards: ["Enpara","Akbank","Garanti BBVA","Yapı Kredi"].map((name,i)=>({
+      id:"card"+i,
+      name,
+      limit: 0,
+      debt: 0,
+      statementDebt: 0,
+      minimum: 0,
+      paidMinimum: 0,
+      statementDate: "",
+      dueDate: ""
+    })),
+    accounts: [],
+    history: []
+  };
+}
+
+let data;
+try {
+  data = JSON.parse(localStorage.getItem(KEY)) || initialData();
+  if (!Array.isArray(data.cards) || !Array.isArray(data.accounts) || !Array.isArray(data.history)) {
+    throw new Error("Invalid data");
+  }
+} catch {
+  data = initialData();
+}
+// Önceki sürümde ekstre borcu tutulmuyordu; tahmin etmeyip kullanıcıdan isteriz.
+data.cards.forEach(c => { if (!Number.isFinite(Number(c.statementDebt))) c.statementDebt = 0; });
+
+const money = n => new Intl.NumberFormat("tr-TR", {
+  style: "currency",
+  currency: "TRY",
+  maximumFractionDigits: 2
+}).format(Number(n)||0);
+
+const num = n => Math.max(0, Number(n)||0);
+const validMoney = (v,label) => { const n=Number(v); if(String(v).trim()==="" || !Number.isFinite(n) || n<0) throw Error(label+" için geçerli tutar girin."); return Math.round(n*100)/100; };
+const localMonth = () => {const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;};
+
+const escapeHTML = s => String(s??"").replace(/[&<>"']/g, c => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(data));
+  render();
+}
+
+function showToast(msg, icon = "✅") {
+  const toast = document.getElementById("toast");
+  document.getElementById("toast-msg").textContent = msg;
+  document.getElementById("toast-icon").textContent = icon;
+  
+  toast.classList.remove("opacity-0", "pointer-events-none", "-translate-y-4");
+  toast.classList.add("opacity-100", "translate-y-0");
+  
+  setTimeout(() => {
+    toast.classList.remove("opacity-100", "translate-y-0");
+    toast.classList.add("opacity-0", "pointer-events-none", "-translate-y-4");
+  }, 3000);
+}
+
+function addHistory(type, name, amount) {
+  data.history.unshift({
+    id: crypto.randomUUID(),
+    type, name, amount,
+    date: new Date().toISOString()
+  });
+  data.history = data.history.slice(0, 200);
+}
+
+// Tab Switcher Logic
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.getElementById(tabId).classList.remove('hidden');
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('text-blue-500');
+    btn.classList.add('text-slate-400');
+    btn.querySelector('span').classList.replace('font-bold', 'font-medium');
+  });
+
+  const activeBtn = document.getElementById(`nav-${tabId}`);
+  if(activeBtn) {
+    activeBtn.classList.remove('text-slate-400');
+    activeBtn.classList.add('text-blue-500');
+    activeBtn.querySelector('span').classList.replace('font-medium', 'font-bold');
+  }
+}
+
+function render() {
+  const debt = data.cards.reduce((s, c) => s + num(c.debt), 0);
+  const minimum = data.cards.reduce((s, c) => s + Math.max(0, num(c.minimum) - num(c.paidMinimum)), 0);
+  const month = localMonth();
+  const paid = data.history.filter(h =>
+    h.type === "Kart ödemesi" &&
+    new Date(h.date).getFullYear()+"-"+String(new Date(h.date).getMonth()+1).padStart(2,"0") === month
+  ).reduce((s, h) => s + num(h.amount), 0);
+  const used = data.accounts.reduce((s, a) => s + num(a.used), 0);
+
+  // Top Dashboard Metrics Rendering
+  const metrics = [
+    { title: "Toplam Kart Borcu", val: debt, color: "text-rose-400", bg: "bg-rose-500/10 border-rose-500/20" },
+    { title: "Kalan Asgari", val: minimum, color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20" },
+    { title: "Bu Ay Ödenen", val: paid, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
+    { title: "Ek Hesap Kullanımı", val: used, color: "text-purple-400", bg: "bg-purple-500/10 border-purple-500/20" }
+  ];
+
+  document.getElementById("metrics").innerHTML = metrics.map(m => `
+    <div class="glass-panel p-3.5 rounded-2xl border ${m.bg} space-y-1">
+      <div class="text-[11px] font-semibold text-slate-400">${m.title}</div>
+      <div class="text-base font-extrabold ${m.color} tracking-tight">${money(m.val)}</div>
+    </div>
+  `).join("");
+
+  // Helper Card Render Template
+  const createCardHTML = (c, fullDetails = true) => {
+    const themeClass = getCardThemeClass(c.name);
+    const logoSVG = bankLogo(c.name);
+    const usagePercent = c.limit ? Math.min(100, Math.round((c.debt / c.limit) * 100)) : 0;
+    const available = Math.max(0, c.limit - c.debt);
+    const remMin = Math.max(0, c.minimum - c.paidMinimum);
+
+    return `
+      <article class="${themeClass} rounded-2xl p-4 text-white relative overflow-hidden transition-all duration-300">
+        <!-- Card Top Bar: Logo & Bank Name -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            ${logoSVG}
+            <div>
+              <h3 class="font-bold text-sm leading-tight text-white">${escapeHTML(c.name)}</h3>
+              <span class="text-[10px] text-white/70 font-medium">Kredi Kartı</span>
+            </div>
+          </div>
+          <!-- Contactless Icon -->
+          <svg class="w-5 h-5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+
+        <!-- EMV Chip & Number Preview -->
+        <div class="my-3 flex items-center justify-between">
+          <!-- Chip SVG -->
+          <div class="w-8 h-6 bg-amber-300/80 rounded-md border border-amber-200/50 flex items-center justify-center relative overflow-hidden">
+            <div class="w-full h-[1px] bg-amber-600/40 absolute top-2"></div>
+            <div class="w-[1px] h-full bg-amber-600/40 absolute left-3"></div>
+          </div>
+          <div class="text-xs tracking-widest font-mono text-white/80">KART TAKİBİ</div>
+        </div>
+
+        <!-- Debt Amount Display -->
+        <div class="space-y-0.5">
+          <div class="text-[10px] text-white/70 uppercase tracking-wider font-semibold">Güncel Borç</div>
+          <div class="text-2xl font-black tracking-tight">${money(c.debt)}</div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-black/30 h-1.5 rounded-full my-3 overflow-hidden">
+          <div class="bg-gradient-to-r from-emerald-400 to-cyan-300 h-full rounded-full transition-all duration-500" style="width: ${usagePercent}%"></div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-white/10">
+          <div><span class="text-white/60">Limit:</span> <strong class="font-semibold text-white">${money(c.limit)}</strong></div>
+          <div><span class="text-white/60">Kullanılabilir:</span> <strong class="font-semibold text-white">${money(available)}</strong></div>
+          <div><span class="text-white/60">Ekstre Borcu:</span> <strong class="font-semibold text-white">${money(c.statementDebt)}</strong></div>
+          <div><span class="text-white/60">Asgari:</span> <strong class="font-semibold text-white">${money(c.minimum)}</strong></div>
+          <div><span class="text-white/60">Kalan Asgari:</span> <strong class="font-semibold text-amber-300">${money(remMin)}</strong></div>
+        </div>
+
+        ${fullDetails ? `
+        <div class="flex items-center justify-between text-[10px] text-white/70 mt-2.5 pt-2 border-t border-white/10">
+          <span>Kesim: <strong>${escapeHTML(c.statementDate || "—")}</strong></span>
+          <span>Son Ödeme: <strong>${escapeHTML(c.dueDate || "—")}</strong></span>
+        </div>
+        ` : ''}
+
+        <!-- Quick Actions Bar -->
+        <div class="grid grid-cols-3 gap-2 mt-3 pt-2">
+          <button onclick="cardPayment('${c.id}')" class="bg-white/20 hover:bg-white/30 text-white font-bold text-xs py-2 px-2 rounded-xl backdrop-blur-md transition flex items-center justify-center space-x-1">
+            <span>+ Ödeme</span>
+          </button>
+          <button onclick="cardSpend('${c.id}')" class="bg-black/30 hover:bg-black/40 text-white font-semibold text-xs py-2 px-2 rounded-xl backdrop-blur-md transition flex items-center justify-center space-x-1">
+            <span>+ Harcama</span>
+          </button>
+          <button onclick="editCard('${c.id}')" class="bg-black/20 hover:bg-black/30 text-white/90 font-medium text-xs py-2 px-2 rounded-xl backdrop-blur-md transition flex items-center justify-center">
+            <span>Düzenle</span>
+          </button>
+        </div>
+
+      </article>
+    `;
+  };
+
+  // Render Preview Cards on Tab 1
+  document.getElementById("cards-preview-container").innerHTML = data.cards.map(c => createCardHTML(c, false)).join("");
+  
+  // Render Full Cards on Tab 2
+  document.getElementById("cards-full-container").innerHTML = data.cards.map(c => createCardHTML(c, true)).join("");
+
+  // Render Overdraft Accounts
+  document.getElementById("accounts").innerHTML = data.accounts.length
+    ? data.accounts.map(a => `
+      <div class="p-3.5 bg-slate-800/60 rounded-xl border border-slate-700/60 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            ${bankLogo(a.name)}
+            <div>
+              <strong class="text-sm font-bold text-white block leading-tight">${escapeHTML(a.name)}</strong>
+              <span class="text-[10px] text-slate-400">Ek Hesap / Artı Para</span>
+            </div>
+          </div>
+          <span class="text-sm font-extrabold text-purple-400">${money(a.used)}</span>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-400 bg-slate-900/50 p-2 rounded-lg">
+          <span>Limit: <strong class="text-slate-200">${money(a.limit)}</strong></span>
+          <span>Kalan: <strong class="text-emerald-400">${money(Math.max(0, a.limit - a.used))}</strong></span>
+        </div>
+
+        <div class="grid grid-cols-4 gap-1.5 pt-1">
+          <button onclick="accountMove('${a.id}','use')" class="bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 font-semibold text-[11px] py-1.5 rounded-lg border border-purple-500/30 transition">+ Kullan</button>
+          <button onclick="accountMove('${a.id}','pay')" class="bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 font-semibold text-[11px] py-1.5 rounded-lg border border-emerald-500/30 transition">− Öde</button>
+          <button onclick="editAccount('${a.id}')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium text-[11px] py-1.5 rounded-lg transition">Düzenle</button>
+          <button onclick="deleteAccount('${a.id}')" class="bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 font-medium text-[11px] py-1.5 rounded-lg transition">Sil</button>
+        </div>
+      </div>
+    `).join("")
+    : '<p class="text-xs text-slate-400 text-center py-4">Henüz ek hesap eklenmedi.</p>';
+
+  // Render Transaction History
+  document.getElementById("history-count").textContent = `${data.history.length} İşlem`;
+  document.getElementById("history").innerHTML = data.history.length
+    ? data.history.slice(0, 30).map(h => {
+        const isPayment = h.type.includes("öde") || h.type.includes("Öde");
+        const amountColor = isPayment ? "text-emerald-400" : "text-rose-400";
+        const sign = isPayment ? "-" : "+";
+        
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/40">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-full ${isPayment ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} flex items-center justify-center text-xs font-bold shrink-0">
+                ${isPayment ? '↓' : '↑'}
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-200">${escapeHTML(h.name)}</div>
+                <div class="text-[10px] text-slate-400">${escapeHTML(h.type)} · ${new Date(h.date).toLocaleDateString("tr-TR")}</div>
+              </div>
+            </div>
+            <div class="text-xs font-black ${amountColor}">${sign}${money(h.amount)}</div>
+          </div>
+        `;
+      }).join("")
+    : '<p class="text-xs text-slate-400 text-center py-4">Henüz kayıtlı işlem yok.</p>';
+}
+
+function field(label, key, value="", type="number") {
+  return `
+    <label class="block space-y-1 text-xs text-slate-300 font-medium">
+      <span>${label}</span>
+      <input name="${key}" type="${type}"
+        ${type==="number" ? 'min="0" step="0.01"' : ''}
+        value="${escapeHTML(value)}"
+        ${key==="amount" ? "required" : ""}
+        class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+    </label>`;
+}
+
+// Android Bottom Sheet Modal Handler
+function openModal(title, fieldsHTML, handler) {
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("fields").innerHTML = fieldsHTML;
+  
+  const form = document.getElementById("form");
+  form.onsubmit = e => {
+    e.preventDefault();
+    try {
+      handler(new FormData(e.target));
+      closeModal();
+      save();
+      showToast("İşlem başarıyla kaydedildi!");
+    } catch(err) {
+      showToast(err.message, "⚠️");
+    }
+  };
+
+  const backdrop = document.getElementById("modal-backdrop");
+  const sheet = document.getElementById("modal-sheet");
+  
+  backdrop.classList.remove("hidden");
+  setTimeout(() => {
+    sheet.classList.remove("closed");
+  }, 10);
+}
+
+function closeModal() {
+  const backdrop = document.getElementById("modal-backdrop");
+  const sheet = document.getElementById("modal-sheet");
+  
+  sheet.classList.add("closed");
+  setTimeout(() => {
+    backdrop.classList.add("hidden");
+  }, 300);
+}
+
+function getCard(id) {
+  return data.cards.find(c => c.id === id);
+}
+
+function editCard(id) {
+  const c = getCard(id);
+  openModal(c.name + " — Kart Bilgileri", [
+    field("Kart limiti", "limit", c.limit),
+    field("Güncel toplam borç", "debt", c.debt),
+    field("Ödenmemiş ekstre borcu", "statementDebt", c.statementDebt),
+    field("Asgari ödeme tutarı", "minimum", c.minimum),
+    field("Ödenen asgari", "paidMinimum", c.paidMinimum),
+    field("Ekstre kesim tarihi", "statementDate", c.statementDate, "date"),
+    field("Son ödeme tarihi", "dueDate", c.dueDate, "date")
+  ].join(""), f => {
+    const limit = validMoney(f.get("limit"), "Limit");
+    const debt = validMoney(f.get("debt"), "Güncel borç");
+    const statementDebt = validMoney(f.get("statementDebt"), "Ekstre borcu");
+    const minimum = validMoney(f.get("minimum"), "Asgari ödeme");
+    let paidMinimum = validMoney(f.get("paidMinimum"), "Ödenen asgari");
+    if(statementDebt > debt) throw Error("Ödenmemiş ekstre borcu güncel borcu aşamaz.");
+    if(paidMinimum > minimum) throw Error("Ödenen asgari tutarı aşamaz.");
+    if(f.get("statementDate") !== c.statementDate) paidMinimum = 0;
+    Object.assign(c, {
+      limit, debt, statementDebt, minimum, paidMinimum,
+      statementDate: f.get("statementDate"),
+      dueDate: f.get("dueDate")
+    });
+  });
+}
+
+function cardPayment(id) {
+  const c = getCard(id);
+  openModal(c.name + " — Ödeme Yap", field("Ödeme tutarı (TL)", "amount"), f => {
+    const amount = validMoney(f.get("amount"), "Ödeme");
+    if(!amount || amount > c.debt) throw Error("Ödeme sıfırdan büyük ve güncel borçtan az olmalı.");
+    const statementPortion = Math.min(amount, num(c.statementDebt));
+    c.debt = Math.max(0,Math.round((c.debt - amount)*100)/100);
+    c.statementDebt = Math.max(0,Math.round((num(c.statementDebt) - statementPortion)*100)/100);
+    c.paidMinimum = Math.min(c.minimum, c.paidMinimum + statementPortion);
+    addHistory("Kart ödemesi", c.name, amount);
+  });
+}
+
+function cardSpend(id) {
+  const c = getCard(id);
+  openModal(c.name + " — Harcama Ekle", field("Harcama tutarı (TL)", "amount"), f => {
+    const amount = validMoney(f.get("amount"), "Harcama");
+    if(!amount) throw Error("Geçerli bir tutar girin.");
+    c.debt = Math.round((c.debt + amount)*100)/100;
+    addHistory("Kart harcaması", c.name, amount);
+  });
+}
+
+function getAccount(id) {
+  return data.accounts.find(a => a.id === id);
+}
+
+function newAccount() {
+  openModal("Yeni Ek Hesap Ekle", [
+    field("Banka / Hesap adı", "name", "", "text"),
+    field("Ek hesap limiti", "limit"),
+    field("Kullanılan tutar", "used")
+  ].join(""), f => {
+    const name = String(f.get("name")).trim();
+    if(!name) throw Error("Hesap adı gerekli.");
+    data.accounts.push({
+      id: crypto.randomUUID(),
+      name,
+      limit: num(f.get("limit")),
+      used: num(f.get("used"))
+    });
+  });
+}
+
+function editAccount(id) {
+  const a = getAccount(id);
+  openModal("Ek Hesap Düzenle", [
+    field("Hesap adı", "name", a.name, "text"),
+    field("Limit", "limit", a.limit),
+    field("Kullanılan", "used", a.used)
+  ].join(""), f => {
+    const name = String(f.get("name")).trim();
+    if(!name) throw Error("Hesap adı gerekli.");
+    Object.assign(a, {
+      name,
+      limit: num(f.get("limit")),
+      used: num(f.get("used"))
+    });
+  });
+}
+
+function accountMove(id, kind) {
+  const a = getAccount(id);
+  openModal(a.name + " — " + (kind === "use" ? "Limit Kullanımı" : "Borç Ödeme"),
+    field("Tutar (TL)", "amount"), f => {
+      const amount = num(f.get("amount"));
+      if(!amount) throw Error("Geçerli bir tutar girin.");
+      if(kind === "pay" && amount > a.used) throw Error("Ödeme kullanılan tutarı aşamaz.");
+      a.used += kind === "use" ? amount : -amount;
+      addHistory(kind === "use" ? "Ek hesap kullanımı" : "Ek hesap ödemesi", a.name, amount);
+    });
+}
+
+function deleteAccount(id) {
+  if(confirm("Bu ek hesap silinsin mi?")) {
+    data.accounts = data.accounts.filter(a => a.id !== id);
+    save();
+    showToast("Ek hesap silindi", "🗑️");
+  }
+}
+
+function backup() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "finans-mobil-yedek.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast("Yedek başarıyla indirildi!");
+}
+
+async function restore(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  try {
+    const imported = JSON.parse(await file.text());
+    if(!Array.isArray(imported.cards) || imported.cards.length !== 4 ||
+       !Array.isArray(imported.accounts) || !Array.isArray(imported.history) ||
+       !imported.cards.every(c => c && typeof c.id === "string" && typeof c.name === "string" && Number.isFinite(Number(c.debt)) && Number(c.debt)>=0) ||
+       !imported.accounts.every(a => a && typeof a.id === "string" && typeof a.name === "string" && Number.isFinite(Number(a.used)) && Number(a.used)>=0) ||
+       !imported.history.every(h => h && typeof h.type === "string" && typeof h.name === "string" && Number.isFinite(Number(h.amount)))) {
+      throw Error("Geçersiz yedek dosyası.");
+    }
+    if(confirm("Mevcut verilerinizin üzerine bu yedek yüklensin mi?")) {
+      data = imported;
+      data.cards.forEach(c => { if (!Number.isFinite(Number(c.statementDebt))) c.statementDebt = 0; });
+      save();
+      showToast("Yedek yüklendi!");
+    }
+  } catch(err) {
+    showToast("Yedek yüklenemedi: " + err.message, "⚠️");
+  }
+  event.target.value = "";
+}
+
+function resetAll() {
+  if(confirm("Tüm kart ve hesap verileriniz sıfırlanacak. Devam edilsin mi?")) {
+    data = initialData();
+    save();
+    showToast("Tüm veriler sıfırlandı", "⚠️");
+  }
+}
+
+// Initial App Render
+render();
+</script>
+</body>
+</html>
